@@ -233,22 +233,22 @@ public class RangeTest {
 		assertEquals("Correct central value not returned", 3.0, r.getCentralValue(), 0.00000001d);
 	}
 	
+	//Lab 3
+	
 	//combine Method Tests
+	//TC 1.1
 	@Test
 	public void testCombine_bothParamsNull() {
 		Range r = Range.combine(null, null);
 		assertEquals("Range object does not match expected Range object", null, r);
 	}
-	@Test
-	public void testCombine_firstParamNullSecondParamValidRange() {
-		Range r = Range.combine(null, new Range(6, 10));
-		assertEquals("Range object does not match expected Range object", new Range(6, 10), r);
-	}
+	//TC 1.2
 	@Test
 	public void testCombine_firstParamValidRangeSecondParamNull() {
 		Range r = Range.combine(new Range(1, 5), null);
 		assertEquals("Range object does not match expected Range object", new Range(1, 5), r);
 	}
+	//TC 1.3
 	@Test
 	public void testCombine_bothParamsValidRanges() {
 		Range r = Range.combine(new Range(1,5), new Range(6, 10));
@@ -256,6 +256,7 @@ public class RangeTest {
 	}
 	
 	//expand Method Tests
+	//TC 2.1
 	@Test
 	public void testExpand_nullRangeParameter() {
 		try{
@@ -266,6 +267,7 @@ public class RangeTest {
 			assertEquals("Incorrect Exception Thrown", e.getClass(), IllegalArgumentException.class);
 		}
 	}
+	//TC 2.2
 	@Test
 	public void testExpand_validRangeParameter() {
 		Range r = Range.expand(new Range(2,6), 0.25, 0.5);
@@ -273,16 +275,19 @@ public class RangeTest {
 	}
 	
 	//shift Method Tests
+	//TC 3.1
 	@Test
 	public void testShift_crossZeroAllowed() {
 		Range r = Range.shift(new Range(-1, 4), 2, true);
 		assertEquals("Method did not shift Range as expected", new Range(1, 6), r);
 	}
+	//TC 3.2
 	@Test
 	public void testShift_crossZeroNotAllowed() {
 		Range r = Range.shift(new Range(-1, 4), 2, false);
 		assertEquals("Method did not shift Range as expected", new Range(0, 6), r);
 	}
+	//TC 3.3
 	@Test
 	public void testShift_crossZeroNotSpecified() {
 		Range r = Range.shift(new Range(-1, 4), 2);
@@ -290,6 +295,7 @@ public class RangeTest {
 	}
 	
 	//Range Constructor Tests
+	//TC 4.1
 	@Test
 	public void testRange_UpperLessThanLower() {
 		try {
@@ -300,15 +306,45 @@ public class RangeTest {
 			assertEquals("Incorrect Exception Thrown", e.getClass(), IllegalArgumentException.class);
 		}
 	}
+	//TC 4.2
+	@Test
+	public void testRange_UpperGreaterThanOrEqualToLower() {
+		Range r = new Range(2, 3);
+		assertEquals("Range object did not return correct lower bound", 2.0, r.getLowerBound(), 0.00000001d);
+		assertEquals("Range object did not return correct lower bound", 3.0, r.getUpperBound(), 0.00000001d);
+	}
 	
 	//intersects Method Tests
+	//TC 5.1
 	@Test
-	public void testIntersects_lowerLessThanThisLower() {
+	public void testIntersects_lowerLessThanOrEqualToThisLowerAndUpperGreaterThanThisLower() {
 		assertTrue("Did not return true despite bounds intersecting", rangeObjectUnderTest.intersects(-1, 4));
 	}
+	//TC 5.2
 	@Test
-	public void testIntersects_lowerGreaterThanThisLower() {
+	public void testIntersects_lowerLessThanOrEqualToThisLowerAndUpperLessThanOrEqualToThisLower() {
+		assertFalse("Did not return false despite bounds not intersecting", rangeObjectUnderTest.intersects(-1, 0));
+	}
+	//TC 5.3
+	@Test
+	public void testIntersects_lowerGreaterThanThisLowerAndUpperGreaterThanOrEqualToThisUpperAndUpperGreaterThanOrEqualToLower() {
 		assertTrue("Did not return true despite bounds intersecting", rangeObjectUnderTest.intersects(2, 6));
+	}
+	//TC 5.4
+	@Test
+	public void testIntersects_LowerGreaterThanThisLowerAndUpperLessThanThisUpperAndUpperGreaterThanOrEqualToLower() {
+		assertTrue("Did not return true despite bounds intersecting", rangeObjectUnderTest.intersects(2, 4));
+	}
+	//TC 5.5
+	@Test
+	public void testIntersects_LowerGreaterThanThisLowerAndUpperGreaterThanOrEqualToThisUpperAndUpperLessThanLower() {
+		Range r = new Range(1,1);
+		assertFalse("Should return false as lower parameter should not be greater than upper parameter", r.intersects(2, 1));
+	}
+	//TC 5.6
+	@Test
+	public void testIntersects_LowerGreaterThanThisLowerAndUpperLessThanThisUpperAndUpperLessThanLower() {
+		assertFalse("Should return false as lower parameter should not be greater than upper parameter", rangeObjectUnderTest.intersects(2, 1));
 	}
 	
 }
